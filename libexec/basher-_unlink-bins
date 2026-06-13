@@ -20,8 +20,10 @@ if [ -z "$bins" ]; then
     bins=("${bins[@]##*/}")
     bins=("${bins[@]/#/bin/}")
   else
-    bins=($(find "$BASHER_PACKAGES_PATH/$package" -maxdepth 1 -perm -u+x -type f -or -type l))
-    bins=("${bins[@]##*/}")
+    bins=()
+    while IFS= read -r -d '' f; do
+      bins[${#bins[@]}]="${f##*/}"
+    done < <(find "$BASHER_PACKAGES_PATH/$package" -maxdepth 1 \( -perm -u+x -type f -or -type l \) -print0)
   fi
 fi
 

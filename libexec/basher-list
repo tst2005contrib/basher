@@ -53,8 +53,10 @@ do
         bins=("${bins[@]##*/}")
         bins=("${bins[@]/#/bin/}")
       else
-        bins=($(find "$BASHER_PACKAGES_PATH/$package_full" -maxdepth 1 -mindepth 1 -perm -u+x -type f -or -type l 2>/dev/null))
-        bins=("${bins[@]##*/}")
+        bins=()
+        while IFS= read -r -d '' f; do
+          bins[${#bins[@]}]="${f##*/}"
+        done < <(find "$BASHER_PACKAGES_PATH/$package_full" -maxdepth 1 -mindepth 1 \( -perm -u+x -type f -or -type l \) -print0 2>/dev/null)
       fi
     fi
     
