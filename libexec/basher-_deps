@@ -10,6 +10,13 @@
 
 set -e
 
+get_vars_from_file() {
+  local names_pattern="$1";shift
+  local content_pattern='[a-zA-Z0-9.:/_-]*'
+  local value_pattern='('"$content_pattern"'|'\'"$content_pattern"\''|"'"$content_pattern"'")'
+  grep -E '^'"$names_pattern"'='"$value_pattern"'$' "$@"
+}
+
 if [ "$#" -ne 1 ]; then
   basher-help _deps
   exit 1
@@ -23,7 +30,7 @@ fi
 
 shopt -s nullglob
 
-source "$BASHER_PACKAGES_PATH/$package/package.sh"
+eval "$(get_vars_from_file 'DEPS' "$BASHER_PACKAGES_PATH/$package/package.sh")"
 IFS=: read -ra deps <<< "$DEPS"
 
 for dep in "${deps[@]}"

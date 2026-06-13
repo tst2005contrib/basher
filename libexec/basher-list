@@ -5,6 +5,13 @@
 
 set -e
 
+get_vars_from_file() {
+  local names_pattern="$1";shift
+  local content_pattern='[a-zA-Z0-9.:/_-]*'
+  local value_pattern='('"$content_pattern"'|'\'"$content_pattern"\''|"'"$content_pattern"'")'
+  grep -E '^'"$names_pattern"'='"$value_pattern"'$' "$@"
+}
+
 case $1 in
   -v)
     verbose="true"
@@ -35,7 +42,7 @@ do
     
     # Check for package.sh file with custom BINS
     if [ -e "$BASHER_PACKAGES_PATH/$package_full/package.sh" ]; then
-      source "$BASHER_PACKAGES_PATH/$package_full/package.sh"
+      eval "$(get_vars_from_file 'BINS' "$BASHER_PACKAGES_PATH/$package_full/package.sh")"
       IFS=: read -ra bins <<< "$BINS"
     fi
     
