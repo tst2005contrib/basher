@@ -33,9 +33,9 @@ if [ -z "$package" ]; then
 fi
 
 if [ -z "$ref" ]; then
-  BRANCH_OPTION=""
+  BRANCH_OPTION=()
 else
-  BRANCH_OPTION="-b $ref"
+  BRANCH_OPTION=(-b "$ref")
 fi
 
 IFS=/ read -r user name <<< "$package"
@@ -60,9 +60,9 @@ if [ -e "$BASHER_PACKAGES_PATH/$folder" ]; then
 fi
 
 if [ "$BASHER_FULL_CLONE" = "true" ]; then
-  DEPTH_OPTION=""
+  DEPTH_OPTION=()
 else
-  DEPTH_OPTION="--depth=1"
+  DEPTH_OPTION=(--depth=1)
 fi
 
 if [ "$use_ssh" = "true" ]; then
@@ -71,4 +71,4 @@ else
   URI="https://${site}/$package.git"
 fi
 
-git clone ${DEPTH_OPTION} ${BRANCH_OPTION} --recursive "$URI" "${BASHER_PACKAGES_PATH}/$folder"
+git clone "${DEPTH_OPTION[@]}" "${BRANCH_OPTION[@]}" --recursive "$URI" "${BASHER_PACKAGES_PATH}/$folder"
